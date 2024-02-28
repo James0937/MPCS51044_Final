@@ -22,12 +22,6 @@ Image.o : Image.cpp Image.h mpcs51044/PNG.h
 StickerSheet.o : StickerSheet.cpp StickerSheet.h Image.h
 	$(CXX) $(CXXFLAGS) StickerSheet.cpp
 
-mp2-1.o: mp2-1.cpp Image.h
-	$(CXX) $(CXXFLAGS) mp2-1.cpp
-
-mp2-1: mp2-1.o Image.o PNG.o HSLAPixel.o lodepng.o
-	$(LD) $^ $(LDFLAGS) -o mp2-1	
-
 
 # mpcs51044 
 PNG.o : mpcs51044/PNG.cpp mpcs51044/PNG.h mpcs51044/HSLAPixel.h mpcs51044/lodepng/lodepng.h

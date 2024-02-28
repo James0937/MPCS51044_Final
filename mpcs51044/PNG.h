@@ -1,9 +1,3 @@
-/**
- * @file PNG.h
- *
- * @author CS 225: Data Structures
- */
-
 #ifndef MPCS_PNG_H
 #define MPCS_PNG_H
 
@@ -11,28 +5,28 @@
 #include <vector>
 #include "HSLAPixel.h"
 
+// The header file of a simple PNG class using HSLAPixels and the lodepng PNG library.
 using namespace std;
 
 namespace mpcs51044 {
   class PNG {
+  private:
+    unsigned int width_; // Width of the image
+    unsigned int height_; // Height of the image
+    HSLAPixel *imageData_; // Array of pixels
+
+    // Helper function for copy
+    void _copy(PNG const & other);
+  
   public:
-    /**
-      * Creates an empty PNG image.
-      */
+    // Creates an empty PNG image.
     PNG();
 
-    /**
-      * Creates a PNG image of the specified dimensions.
-      * @param width Width of the new image.
-      * @param height Height of the new image.
-      */
+    // Creates a PNG image of the specified dimensions.
     PNG(unsigned int width, unsigned int height);  
 
-    /**
-      * Copy constructor: creates a new PNG image that is a copy of
-      * another.
-      * @param other PNG to be copied.
-      */
+    // Copy constructor which creates a new PNG image that is a copy of another.
+    // I think this function is mandatory, and that's why I don't use unique_ptr.
     PNG(PNG const & other);
 
     /**
@@ -41,83 +35,35 @@ namespace mpcs51044 {
       */
     ~PNG();
   
-    /**
-      * Assignment operator for setting two PNGs equal to one another.
-      * @param other Image to copy into the current image.
-      * @return The current image for assignment chaining.
-      */
+    // Assignment operator for setting two PNGs equal to one another.
     PNG const & operator= (PNG const & other);
 
-    /**
-      * Equality operator: checks if two images are the same.
-      * @param other Image to be checked.
-      * @return Whether the current image is equal to the other image.
-      */
+    // Overloading equality operator: checks if two images are the same.
     bool operator== (PNG const & other) const;
 
-    /**
-      * Inequality operator: checks if two images are different.
-      * @param other Image to be checked.
-      * @return Whether the current image differs from the other image.
-      */
+    // Overloading inequality operator: checks if two images are different.
     bool operator!= (PNG const & other) const;
 
-
-    /**
-      * Reads in a PNG image from a file.
-      * Overwrites any current image content in the PNG.
-      * @param fileName Name of the file to be read from.
-      * @return true, if the image was successfully read and loaded.
-      */
+    // Reads in a PNG image from a file.
     bool readFromFile(string const & fileName);
 
-    /**
-      * Writes a PNG image to a file.
-      * @param fileName Name of the file to be written.
-      * @return true, if the image was successfully written.
-      */
+    // Writes a PNG image to a file.
     bool writeToFile(string const & fileName);
 
-    /**
-      * Pixel access operator. Gets a pointer to the pixel at the given
-      * coordinates in the image. (0,0) is the upper left corner.
-      * This pointer allows the image to be changed.
-      * @param x X-coordinate for the pixel pointer to be grabbed from.
-      * @param y Y-coordinate for the pixel pointer to be grabbed from.
-      * @return A pointer to the pixel at the given coordinates.
-      */
+    // Gets a pointer to the pixel at the given coordinates in the image.
+    // (0,0) is the upper left corner.
+    // It can be used to change the image.
     HSLAPixel * getPixel(unsigned int x, unsigned int y);
 
-    /**
-      * Gets the width of this image.
-      * @return Width of the image.
-      */
+    // Return the width of the image.
     unsigned int width() const;
 
-    /**
-      * Gets the height of this image.
-      * @return Height of the image.
-      */
+    // Return the height of the image.
     unsigned int height() const;
 
-    /**
-      * Resizes the image to the given coordinates. Attempts to preserve
-      * existing pixel data in the image when doing so, but will crop if
-      * necessary. No pixel interpolation is done.
-      * @param newWidth New width of the image.
-      * @param newHeight New height of the image.
-      */
+    // Resizes the image to the given coordinates.
+    // Attempts to preserve existing pixel data but will crop if necessary.
     void resize(unsigned int newWidth, unsigned int newHeight);
-      
-  private:
-    unsigned int width_;            /*< Width of the image */
-    unsigned int height_;           /*< Height of the image */
-    HSLAPixel *imageData_;          /*< Array of pixels */
-
-    /**
-     * Copeies the contents of `other` to self
-     */
-     void _copy(PNG const & other);
   };
 }
 

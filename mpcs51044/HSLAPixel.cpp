@@ -1,19 +1,8 @@
-/**
- * @file HSLAPixel.cpp
- * Implementation of the HSLAPixel class for use in with the PNG library.
- *
- * @author CS 225: Data Structures
- */
-
 #include "HSLAPixel.h"
 
+/*It is the implementation of the HSLAPixel class for use in the PNG library.*/
 namespace mpcs51044 {
-  HSLAPixel::HSLAPixel() {
-    h = 0;
-    s = 0;
-    l = 1.0;
-    a = 1.0;
-  }
+  HSLAPixel::HSLAPixel(): h(0), s(0), l(1.0), a(1.0) {}
 
   HSLAPixel::HSLAPixel(double hue, double saturation, double luminance) {
     h = hue;
@@ -30,7 +19,7 @@ namespace mpcs51044 {
   }
 
   bool HSLAPixel::operator== (HSLAPixel const & other) const {
-    // thank/blame Wade for the following function
+    // The logic is shown in the website
     if (a != other.a) { return false; }
     if ( a == 0 ) { return true; }
 

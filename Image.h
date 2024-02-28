@@ -1,10 +1,3 @@
-/**
- * @file Image.h
- *
- * @author Howie Liu
- * @date Fri Mar 17 3:21:15 AM
- */
-
 #ifndef MPCS_Image_H
 #define MPCS_Image_H
 

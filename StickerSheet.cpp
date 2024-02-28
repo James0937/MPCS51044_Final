@@ -1,10 +1,3 @@
-/**
- * @file StickerSheet.cpp
- *
- * @author Howie Liu
- * @date Fri Mar 17 3:21:15 AM
- */
-
 #include "StickerSheet.h"
 
 namespace mpcs51044 {

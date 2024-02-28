@@ -1,10 +1,3 @@
-/**
- * @file Image.cpp
- *
- * @author Howie Liu
- * @date Fri Mar 17 3:23:54 AM
- */
-
 #include "Image.h"
 
 namespace mpcs51044 {
@@ -14,8 +7,8 @@ Image::Image() : PNG() {}
 Image::Image(unsigned width, unsigned height) : PNG(width, height) {}
 
 void Image::lighten(double amount) {
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             HSLAPixel* p = getPixel(w, h);
             if ((p->l += amount) > 1) {
                 p->l = 1;
@@ -25,8 +18,8 @@ void Image::lighten(double amount) {
 }
 
 void Image::darken(double amount) {
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             HSLAPixel* p = getPixel(w, h);
             if ((p->l -= amount) < 0) {
                 p->l = 0;
@@ -36,8 +29,8 @@ void Image::darken(double amount) {
 }
 
 void Image::saturate(double amount) {
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             HSLAPixel* p = getPixel(w, h);
             if ((p->s += amount) > 1) {
                 p->s = 1;
@@ -47,8 +40,8 @@ void Image::saturate(double amount) {
 }
 
 void Image::desaturate(double amount) {
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             HSLAPixel* p = getPixel(w, h);
             if ((p->s -= amount) < 0) {
                 p->s = 0;
@@ -58,8 +51,8 @@ void Image::desaturate(double amount) {
 }
 
 void Image::grayscale() {
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             getPixel(w, h)->s = 0;
         }
     }
@@ -74,8 +67,8 @@ void Image::rotateColor(double degrees) {
         degrees -= 360 * (int(degrees) / 360);
     }
     // std::cout << " | New degrees: " << degrees << std::endl;
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             HSLAPixel* p = getPixel(w, h);
             if ((p->h += degrees) > 360) {
                 p->h -= 360;
@@ -88,8 +81,8 @@ void Image::rotateColor(double degrees) {
 #define ILL_Blue   216
 
 void Image::illinify() {
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             HSLAPixel* p = getPixel(w, h);
             p->h = (p->h >= ((ILL_Blue + ILL_Orange) >> 1) &&
                     p->h <= ((ILL_Blue + ILL_Orange + 360) >> 1)
@@ -104,8 +97,8 @@ void Image::illinify() {
 void Image::scale(double factor) {
     PNG* old = new PNG(*this);
     resize(width() * factor, height() * factor);
-    for (unsigned w = 0; w < width(); ++w) {
-        for (unsigned h = 0; h < height(); ++h) {
+    for (unsigned w = 0; w < width(); w++) {
+        for (unsigned h = 0; h < height(); h++) {
             HSLAPixel* new_p = getPixel(w, h);
             HSLAPixel* old_p = old->getPixel(w / factor, h / factor);
             *new_p = *old_p;

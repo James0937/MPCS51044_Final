@@ -1,12 +1,3 @@
-/**
- * @file PNG.cpp
- * Implementation of a simple PNG class using HSLAPixels and the lodepng PNG library.
- *
- * @author CS 225: Data Structures
- *
- * @version 1.1
- */
-
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -14,6 +5,7 @@
 #include "PNG.h"
 #include "RGB_HSL.h"
 
+// The implementation of a simple PNG class using HSLAPixels and the lodepng PNG library.
 namespace mpcs51044 {
   void PNG::_copy(PNG const & other) {
     // Clear self
