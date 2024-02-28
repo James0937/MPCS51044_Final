@@ -1,10 +1,3 @@
-/**
- * @file StickerSheet.h
- *
- * @author Howie Liu
- * @date Fri Mar 17 3:21:15 AM
- */
-
 #ifndef MPCS_StickerSheet_H
 #define MPCS_StickerSheet_H
 
