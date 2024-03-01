@@ -23,8 +23,8 @@ namespace mpcs51044 {
     HSLAPixel(double hue, double saturation, double luminance, double alpha);
 
     // Overloading for convenience
-    bool operator== (HSLAPixel const & other) const ;
-    bool operator!= (HSLAPixel const & other) const ;
+    bool operator== (HSLAPixel const & other) const;
+    bool operator!= (HSLAPixel const & other) const;
   };
   // Stream operator for convenience
   std::ostream & operator<<(std::ostream & out, HSLAPixel const & pixel);

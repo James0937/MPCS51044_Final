@@ -38,9 +38,7 @@ namespace mpcs51044 {
 
   std::ostream & operator<<(std::ostream & out, HSLAPixel const & pixel) {
     out << "(" << pixel.h << ", " << pixel.s << ", " << pixel.l << (pixel.a != 1 ? ", " + std::to_string(pixel.a) : "") << ")";
-
     return out;
   }
-
 }
  
