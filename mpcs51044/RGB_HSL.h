@@ -1,5 +1,6 @@
 #include <cmath>
 
+/* For conversion between RGB and HSLA formats */
 namespace mpcs51044 {
   typedef struct {
     unsigned char r, g, b, a; // all in [0, 255]
@@ -42,12 +43,12 @@ namespace mpcs51044 {
     // S
     hsl.s = chroma / (1 - fabs((2 * hsl.l) - 1));
     // H
-    if      (max == r) { hsl.h = fmod((g - b) / chroma, 6); }
-    else if (max == g) { hsl.h = ((b - r) / chroma) + 2; }
-    else               { hsl.h = ((r - g) / chroma) + 4; }
+    if (max == r) hsl.h = fmod((g - b) / chroma, 6);
+    else if (max == g) hsl.h = ((b - r) / chroma) + 2;
+    else hsl.h = ((r - g) / chroma) + 4;
 
     hsl.h *= 60;
-    if (hsl.h < 0) { hsl.h += 360; }
+    if (hsl.h < 0) hsl.h += 360;
 
     // Return result
     return hsl;
@@ -56,9 +57,7 @@ namespace mpcs51044 {
   static rgbaColor hsl2rgb(hslaColor hsl) {
     rgbaColor rgb;
     // HSV Calculations -- function is refered from https://en.wikipedia.org/wiki/HSL_and_HSV
-    if (hsl.s <= 0.001) {
-      rgb.r = rgb.g = rgb.b = round(hsl.l * 255);
-    }
+    if (hsl.s <= 0.001) rgb.r = rgb.g = rgb.b = round(hsl.l * 255);
     else {
       double c = (1 - fabs((2 * hsl.l) - 1)) * hsl.s;
       double hh = hsl.h / 60;
