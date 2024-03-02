@@ -26,8 +26,17 @@ namespace mpcs51044 {
     // Copy constructor which creates a new PNG image that is a copy of another.
     PNG(PNG const & other) noexcept;
 
+    // No need to write extra deconstructor
     ~PNG() = default;
-  
+
+    // Using template function for better implementation in the further Image class
+    template<typename Func>
+    void modifyPixels(Func func) noexcept {
+        for (auto& pixel : imageData_) {
+            func(pixel);
+        }
+    }
+
     // Assignment operator for setting two PNGs equal to one another.
     PNG & operator= (PNG const & other) noexcept;
 
