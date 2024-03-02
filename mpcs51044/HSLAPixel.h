@@ -7,7 +7,7 @@
 namespace mpcs51044 {
   // The brief intro of HSLA fornat: https://www.w3schools.com/html/html_colors_hsl.asp
   struct HSLAPixel {
-  public:
+    // struct default to be public
     double h = 0; // Double for the hue of the pixel, in degrees [0, 360]
     double s = 0; // Double for the saturation of the pixel, [0, 1]
     double l = 1.0; // Double for the luminance of the pixel, [0, 1]
