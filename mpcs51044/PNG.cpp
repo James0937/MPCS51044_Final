@@ -7,56 +7,41 @@
 
 // The implementation of a simple PNG class using HSLAPixels and the lodepng PNG library.
 namespace mpcs51044 {
-  void PNG::_copy(PNG const & other) {
-    // Clear self
-    delete[] imageData_;
-    
-    // Copy `other` to self
-    width_ = other.width_;
-    height_ = other.height_;
-    imageData_ = new HSLAPixel[width_ * height_];
-    for (unsigned i = 0; i < width_ * height_; i++) {
-      imageData_[i] = other.imageData_[i];
-    }
-  }
+  PNG::PNG() noexcept: width_(0), height_(0), imageData_(){}
 
-  PNG::PNG() {
-    width_ = 0;
-    height_ = 0;
-    imageData_ = NULL;
-  }
-
-  PNG::PNG(unsigned int width, unsigned int height) {
+  PNG::PNG(unsigned int width, unsigned int height) noexcept {
     width_ = width;
     height_ = height;
-    imageData_ = new HSLAPixel[width * height];
+    imageData_ = vector<HSLAPixel>(width * height);
   }
 
-  PNG::PNG(PNG const & other) {
-    imageData_ = NULL;
-    _copy(other);
+  PNG::PNG(PNG const & other) noexcept {
+    width_ = other.width_;
+    height_ = other.height_;
+    imageData_ = other.imageData_;
   }
 
-  PNG::~PNG() {
-    delete[] imageData_;
-  }
-
-  PNG const & PNG::operator=(PNG const & other) {
-    if (this != &other) { _copy(other); }
-    return *this;
+  PNG & PNG::operator=(PNG const & other) noexcept {
+      if (this != &other) {
+          width_ = other.width_;
+          height_ = other.height_;
+          imageData_ = other.imageData_;
+      }
+      return *this;
   }
 
   bool PNG::operator== (PNG const & other) const {
-    if (width_ != other.width_) { return false; }
-    if (height_ != other.height_) { return false; }
+    if (width_ != other.width_ || height_ != other.height_) 
+      return false;
     
     for (unsigned i = 0; i < width_ * height_; i++) {
-      HSLAPixel & p1 = imageData_[i];
-      HSLAPixel & p2 = other.imageData_[i];
+      // Alias for more convenient typing :)
+      const HSLAPixel& p1 = imageData_[i];
+      const HSLAPixel& p2 = other.imageData_[i];
 
-      if (p1.h != p2.h || p1.s != p2.s || p1.l != p2.l || p1.a != p2.a) { return false; }
+      if (p1.h != p2.h || p1.s != p2.s || p1.l != p2.l || p1.a != p2.a) 
+      return false;
     }
-
     return true;
   }
 
@@ -65,28 +50,17 @@ namespace mpcs51044 {
   }
 
   HSLAPixel * PNG::getPixel(unsigned int x, unsigned int y) {
+    // boundary check
     if (width_ == 0 || height_ == 0) {
       cerr << "ERROR: Call to mpcs51044::PNG::getPixel() made on an image with no pixels." << endl;
       cerr << "     : Returning NULL." << endl;
       return NULL;
     }
-
-    if (x >= width_) {
-      cerr << "WARNING: Call to mpcs51044::PNG::getPixel(" << x << "," << y << ") tries to access x=" << x
-          << ", which is outside of the image (image width: " << width_ << ")." << endl;
-      cerr << "       : Truncating x to " << (width_ - 1) << endl;
-      x = width_ - 1;
-    }
-
-    if (y >= height_) {
-      cerr << "WARNING: Call to mpcs51044::PNG::getPixel(" << x << "," << y << ") tries to access y=" << y
-          << ", which is outside of the image (image height: " << height_ << ")." << endl;
-      cerr << "       : Truncating y to " << (height_ - 1) << endl;
-      y = height_ - 1;
+    if (x >= width_ || y >= height_) {
+        throw std::out_of_range("Attempt to access pixel out of bounds.");
     }
     
-    unsigned index = x + (y * width_);
-    return imageData_ + index;
+    return &imageData_[x + y * width_];
   }
 
   bool PNG::readFromFile(string const & fileName) {
@@ -98,8 +72,7 @@ namespace mpcs51044 {
       return false;
     }
 
-    delete[] imageData_;
-    imageData_ = new HSLAPixel[width_ * height_];
+    imageData_ = vector<HSLAPixel>(width_ * height_);
 
     for (unsigned i = 0; i < byteData.size(); i += 4) {
       rgbaColor rgb;
@@ -109,18 +82,14 @@ namespace mpcs51044 {
       rgb.a = byteData[i + 3];
 
       hslaColor hsl = rgb2hsl(rgb);
-      HSLAPixel & pixel = imageData_[i/4];
-      pixel.h = hsl.h;
-      pixel.s = hsl.s;
-      pixel.l = hsl.l;
-      pixel.a = hsl.a;
+      imageData_[i/4] = HSLAPixel(hsl.h, hsl.s, hsl.l, hsl.a);
     }
 
     return true;
   }
 
   bool PNG::writeToFile(string const & fileName) {
-    unsigned char *byteData = new unsigned char[width_ * height_ * 4];
+    vector<unsigned char> byteData(width_ * height_ * 4);
 
     for (unsigned i = 0; i < width_ * height_; i++) {
       hslaColor hsl;
@@ -131,47 +100,41 @@ namespace mpcs51044 {
 
       rgbaColor rgb = hsl2rgb(hsl);
 
-      byteData[(i * 4)]     = rgb.r;
-      byteData[(i * 4) + 1] = rgb.g;
-      byteData[(i * 4) + 2] = rgb.b;
-      byteData[(i * 4) + 3] = rgb.a;
+      byteData[4*i] = rgb.r;
+      byteData[4*i + 1] = rgb.g;
+      byteData[4*i + 2] = rgb.b;
+      byteData[4*i + 3] = rgb.a;
     }
 
-    unsigned error = lodepng::encode(fileName, byteData, width_, height_);
+    unsigned error = lodepng::encode(fileName, byteData.data(), width_, height_);
     if (error) {
       cerr << "PNG encoding error " << error << ": " << lodepng_error_text(error) << endl;
     }
 
-    delete[] byteData;
     return (error == 0);
   }
 
-  unsigned int PNG::width() const {
+  unsigned int PNG::width() const noexcept{
     return width_;
   } 
 
-  unsigned int PNG::height() const {
+  unsigned int PNG::height() const noexcept{
     return height_;
   } 
 
   void PNG::resize(unsigned int newWidth, unsigned int newHeight) {
     // Create a new vector to store the image data for the new (resized) image
-    HSLAPixel * newImageData = new HSLAPixel[newWidth * newHeight];
+    vector<HSLAPixel> newImageData(newWidth * newHeight);
 
     // Copy the current data to the new image data, using the existing pixel
-    // for coordinates within the bounds of the old image size
+    // For coordinates within the bounds of the old image size
     for (unsigned x = 0; x < newWidth; x++) {
       for (unsigned y = 0; y < newHeight; y++) {
         if (x < width_ && y < height_) {
-          HSLAPixel *oldPixel = this->getPixel(x, y);
-          HSLAPixel & newPixel = newImageData[ (x + (y * newWidth)) ];
-          newPixel = *oldPixel;
+          newImageData[y * newWidth + x] = *getPixel(x, y);
         }
       }
     }
-
-    // Clear the existing image
-    delete[] imageData_;
 
     // Update the image to reflect the new image size and data
     width_ = newWidth;
