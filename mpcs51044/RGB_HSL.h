@@ -2,18 +2,18 @@
 
 /* For conversion between RGB and HSLA formats */
 namespace mpcs51044 {
-  typedef struct {
+  using rgbaColor = struct {
     unsigned char r, g, b, a; // all in [0, 255]
-  } rgbaColor;
+  };
 
-  typedef struct {
+  using hslaColor = struct {
     double h;  // angle in degrees, [0, 360]
     double s;  // [0, 1]
     double l;  // [0, 1]
     double a;  // [0, 1]
-  } hslaColor;
+  };
 
-  static hslaColor rgb2hsl(rgbaColor rgb) {
+  static hslaColor rgb2hsl(rgbaColor rgb) noexcept{
     hslaColor hsl;
     double r, g, b, min, max, chroma;
 
@@ -54,7 +54,7 @@ namespace mpcs51044 {
     return hsl;
   }
 
-  static rgbaColor hsl2rgb(hslaColor hsl) {
+  static rgbaColor hsl2rgb(hslaColor hsl) noexcept{
     rgbaColor rgb;
     // HSV Calculations -- function is refered from https://en.wikipedia.org/wiki/HSL_and_HSV
     if (hsl.s <= 0.001) rgb.r = rgb.g = rgb.b = round(hsl.l * 255);

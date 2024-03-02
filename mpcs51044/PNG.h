@@ -53,7 +53,7 @@ namespace mpcs51044 {
     // Gets a pointer to the pixel at the given coordinates in the image.
     // (0,0) is the upper left corner.
     // It can be used to change the image.
-    HSLAPixel * getPixel(unsigned int x, unsigned int y);
+    HSLAPixel* getPixel(unsigned int x, unsigned int y);
 
     // Return the width of the image.
     unsigned int width() const;
