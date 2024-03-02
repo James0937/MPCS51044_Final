@@ -52,9 +52,7 @@ namespace mpcs51044 {
   HSLAPixel * PNG::getPixel(unsigned int x, unsigned int y) {
     // boundary check
     if (width_ == 0 || height_ == 0) {
-      cerr << "ERROR: Call to mpcs51044::PNG::getPixel() made on an image with no pixels." << endl;
-      cerr << "     : Returning NULL." << endl;
-      return NULL;
+      throw std::out_of_range("The figure is empty.");
     }
     if (x >= width_ || y >= height_) {
         throw std::out_of_range("Attempt to access pixel out of bounds.");
@@ -68,8 +66,7 @@ namespace mpcs51044 {
     unsigned error = lodepng::decode(byteData, width_, height_, fileName);
 
     if (error) {
-      cerr << "PNG decoder error " << error << ": " << lodepng_error_text(error) << endl;
-      return false;
+      throw std::logic_error("PNG decoding error");
     }
 
     imageData_ = vector<HSLAPixel>(width_ * height_);
@@ -108,7 +105,7 @@ namespace mpcs51044 {
 
     unsigned error = lodepng::encode(fileName, byteData.data(), width_, height_);
     if (error) {
-      cerr << "PNG encoding error " << error << ": " << lodepng_error_text(error) << endl;
+      throw std::logic_error("PNG encoding error");
     }
 
     return (error == 0);

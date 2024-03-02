@@ -7,7 +7,6 @@
 
 // The header file of a simple PNG class using HSLAPixels and the lodepng PNG library.
 using std::string;
-using std::cerr;
 using std::endl;
 using std::vector;
 
