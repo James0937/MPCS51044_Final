@@ -4,35 +4,31 @@
 #include "mpcs51044/PNG.h"
 
 namespace mpcs51044 {
-
+/* Image class is inherited from the PNG class
+* Merely support sticker is boring, isn't it?
+* So I add some new features for Image Processing */
 class Image : public PNG {
+// private:
+//     unsigned int width_; // Width of the image
+//     unsigned int height_; // Height of the image
+//     vector<HSLAPixel> imageData_; // Array of pixels
 public:
+    // The default constructor
+    // We use the constructor of PNG class for Image
+    Image() noexcept;
 
-    /**
-     * @brief Construct a new Image object
-     */
-    Image();
+    // The ususal constructor
+    // Also use the PNG one
+    explicit Image(unsigned width, unsigned height) noexcept;
 
-    /**
-     * @brief Construct a new Image object
-     * 
-     * @param width width of the image
-     * @param height height of the image
-     */
-    Image(unsigned width, unsigned height);
-
-    /**
-     * Lighten an Image by increasing the luminance of every pixel by amount.
-     * This function ensures that the luminance remains in the range [0, 1].
-     * @param amount    The desired increase in luminance.
-     */
+    // Make the image much lighter than before
+    // Based on the definition of HSLA, we change the value of luminance
+    // The maximum boundary is "1.0"
     void lighten(double amount = 0.1);
 
-    /**
-     * Darken an Image by decreasing the luminance of every pixel by amount.
-     * This function ensures that the luminance remains in the range [0, 1].
-     * @param amount    The desired decrease in luminance.
-     */
+    // Make the image much darker than before
+    // Based on the definition of HSLA, we change the value of luminance
+    // The maximum boundary is "1.0"
     void darken(double amount = 0.1);
 
     /**
@@ -60,11 +56,6 @@ public:
      * @param degrees   The desired amount of rotation.
      */
     void rotateColor(double degrees);
-
-    /**
-     * Illinifies the image.
-     */
-    void illinify();
 
     /**
      * Scales the Image by a given factor.

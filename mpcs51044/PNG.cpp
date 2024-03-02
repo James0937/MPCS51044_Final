@@ -49,7 +49,7 @@ namespace mpcs51044 {
     return !(*this == other);
   }
 
-  HSLAPixel * PNG::getPixel(unsigned int x, unsigned int y) {
+  HSLAPixel& PNG::getPixel(unsigned int x, unsigned int y) {
     // boundary check
     if (width_ == 0 || height_ == 0) {
       throw std::out_of_range("The figure is empty.");
@@ -58,7 +58,7 @@ namespace mpcs51044 {
         throw std::out_of_range("Attempt to access pixel out of bounds.");
     }
     
-    return &imageData_[x + y * width_];
+    return imageData_[x + y * width_];
   }
 
   bool PNG::readFromFile(string const & fileName) {
@@ -128,7 +128,7 @@ namespace mpcs51044 {
     for (unsigned x = 0; x < newWidth; x++) {
       for (unsigned y = 0; y < newHeight; y++) {
         if (x < width_ && y < height_) {
-          newImageData[y * newWidth + x] = *getPixel(x, y);
+          newImageData[y * newWidth + x] = getPixel(x, y);
         }
       }
     }

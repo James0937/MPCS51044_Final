@@ -13,10 +13,10 @@ Image createRainbowImage() {
 
   for (unsigned x = 0; x < png.width(); x++) {
     for (unsigned y = 0; y < png.height(); y++) {
-      HSLAPixel * pixel = png.getPixel(x, y);
-      pixel->h = x;
-      pixel->s = y / 100.0;
-      pixel->l = y / 100.0;
+      HSLAPixel& pixel = png.getPixel(x, y);
+      pixel.h = x;
+      pixel.s = y / 100.0;
+      pixel.l = y / 100.0;
     }
   }
   return png;
@@ -32,8 +32,8 @@ TEST_CASE("Image lighten() works correctly", "[weight=1][part=1]") {
   Image result = createRainbowImage();
   result.lighten();
 
-  REQUIRE( img.getPixel(10, 10)->l + 0.1 == result.getPixel(10, 10)->l );
-  REQUIRE( 1.0 == result.getPixel(10, 95)->l );
+  REQUIRE( img.getPixel(10, 10).l + 0.1 == result.getPixel(10, 10).l );
+  REQUIRE( 1.0 == result.getPixel(10, 95).l );
 }
 
 TEST_CASE("Image darken(0.2) works correctly", "[weight=1][part=1]") {
@@ -42,8 +42,8 @@ TEST_CASE("Image darken(0.2) works correctly", "[weight=1][part=1]") {
   Image result = createRainbowImage();
   result.darken(0.2);
 
-  REQUIRE( img.getPixel(50, 50)->l - 0.2 == result.getPixel(50, 50)->l );
-  REQUIRE( 0 == result.getPixel(5, 5)->l );
+  REQUIRE( img.getPixel(50, 50).l - 0.2 == result.getPixel(50, 50).l );
+  REQUIRE( 0 == result.getPixel(5, 5).l );
 }
 
 
@@ -56,11 +56,11 @@ TEST_CASE("Image {de}saturate() works correctly", "[weight=1][part=1]") {
   Image result = createRainbowImage();
   result.saturate();
 
-  REQUIRE( img.getPixel(10, 10)->s + 0.1 == result.getPixel(10, 10)->s );
+  REQUIRE( img.getPixel(10, 10).s + 0.1 == result.getPixel(10, 10).s );
   
   result.desaturate();
   
-  REQUIRE( img.getPixel(10, 10)->s == result.getPixel(10, 10)->s );
+  REQUIRE( img.getPixel(10, 10).s == result.getPixel(10, 10).s );
 }
 
 //
@@ -72,14 +72,14 @@ TEST_CASE("Image rotateColor() works correctly", "[weight=1][part=1]") {
   Image result = createRainbowImage();
   result.rotateColor(90);
 
-  REQUIRE( img.getPixel(90, 90)->h + 90 == result.getPixel(90, 90)->h );
-  REQUIRE( result.getPixel(340, 90)->h == 70 );
+  REQUIRE( img.getPixel(90, 90).h + 90 == result.getPixel(90, 90).h );
+  REQUIRE( result.getPixel(340, 90).h == 70 );
   
   result.rotateColor(-270);
-  REQUIRE( result.getPixel(10, 90)->h == 190 );
+  REQUIRE( result.getPixel(10, 90).h == 190 );
   
   result.rotateColor(720*10);
-  REQUIRE( result.getPixel(10, 90)->h == 190 );
+  REQUIRE( result.getPixel(10, 90).h == 190 );
 }
 
 
@@ -93,8 +93,8 @@ TEST_CASE("Image scale(2.0) works correctly", "[weight=1][part=1]") {
   result.scale(2.0);
 
   REQUIRE( img.height() * 2 == result.height() );
-  REQUIRE( result.getPixel(100, 100)->h > 40 );
-  REQUIRE( result.getPixel(100, 100)->h < 60 );
+  REQUIRE( result.getPixel(100, 100).h > 40 );
+  REQUIRE( result.getPixel(100, 100).h < 60 );
 }
 
 TEST_CASE("Image scale(0.5) works correctly", "[weight=1][part=1]") {
@@ -105,8 +105,8 @@ TEST_CASE("Image scale(0.5) works correctly", "[weight=1][part=1]") {
 
   REQUIRE( img.height() * 0.5 == result.height() );
   
-  REQUIRE( result.getPixel(100, 20)->h > 180 );
-  REQUIRE( result.getPixel(100, 20)->h < 220 );
+  REQUIRE( result.getPixel(100, 20).h > 180 );
+  REQUIRE( result.getPixel(100, 20).h < 220 );
 }
 
 TEST_CASE("Image scale(1080,200) works correctly", "[weight=1][part=1]") {
@@ -116,8 +116,8 @@ TEST_CASE("Image scale(1080,200) works correctly", "[weight=1][part=1]") {
   result.scale(1080,200);
 
   REQUIRE( result.width() == 720);
-  REQUIRE( result.getPixel(400, 80)->h > 180 );
-  REQUIRE( result.getPixel(400, 80)->h < 220 );
+  REQUIRE( result.getPixel(400, 80).h > 180 );
+  REQUIRE( result.getPixel(400, 80).h < 220 );
 }
 
 TEST_CASE("Image scale(180,512) works correctly", "[weight=1][part=1]") {
@@ -126,8 +126,8 @@ TEST_CASE("Image scale(180,512) works correctly", "[weight=1][part=1]") {
   Image result = createRainbowImage();
   result.scale(180,512);
   
-  REQUIRE( result.getPixel(100, 20)->h > 180 );
-  REQUIRE( result.getPixel(100, 20)->h < 220 );
+  REQUIRE( result.getPixel(100, 20).h > 180 );
+  REQUIRE( result.getPixel(100, 20).h < 220 );
 }
 
 // Part 2 Testing:
@@ -188,10 +188,10 @@ TEST_CASE("Several Stickers are out of image", "[weight=2][id=range]") {
   REQUIRE( res.height() >= 727 );
   REQUIRE( res.height() < 960 );
 
-  REQUIRE( res.getPixel(830,443)->h > 210 );
-  REQUIRE( res.getPixel(830,443)->h < 220 );
-  REQUIRE( res.getPixel(136,443)->h > 8 );
-  REQUIRE( res.getPixel(136,443)->h < 15 );
+  REQUIRE( res.getPixel(830,443).h > 210 );
+  REQUIRE( res.getPixel(830,443).h < 220 );
+  REQUIRE( res.getPixel(136,443).h > 8 );
+  REQUIRE( res.getPixel(136,443).h < 15 );
 }
 
 TEST_CASE("Add, remove and change stickers", "[weight=3][id=add]") {

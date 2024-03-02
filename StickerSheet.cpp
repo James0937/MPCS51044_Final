@@ -156,16 +156,16 @@ Image StickerSheet::render() const {
         }
     }
     Image output = Image(w_out, h_out);
-    HSLAPixel* output_pixel;
-    HSLAPixel* base_pixel;
-    HSLAPixel* sticker_pixel;
+    // HSLAPixel& output_pixel;
+    // HSLAPixel& base_pixel;
+    // HSLAPixel& sticker_pixel;
     unsigned x, y;
     // copy base to output
     for (x = 0; x < base_->width(); ++x) {
         for (y = 0; y < base_->height(); ++y) {
-            base_pixel = base_->getPixel(x, y);
-            output_pixel = output.getPixel(x, y);
-            *output_pixel = *base_pixel;
+            HSLAPixel& base_pixel = base_->getPixel(x, y);
+            HSLAPixel& output_pixel = output.getPixel(x, y);
+            output_pixel = base_pixel;
         }
     }
     // loop over every sticker
@@ -176,12 +176,12 @@ Image StickerSheet::render() const {
             // loop over every pixel
             for (x = 0; x < sticker->width(); ++x) {
                 for (y = 0; y < sticker->height(); ++y) {
-                    sticker_pixel = sticker->getPixel(x, y);
+                    HSLAPixel& sticker_pixel = sticker->getPixel(x, y);
                     // alpha is not 0
-                    if (sticker_pixel->a > 1e-6) {
-                        output_pixel =
+                    if (sticker_pixel.a > 1e-6) {
+                        HSLAPixel& output_pixel =
                             output.getPixel(x + x_[index], y + y_[index]);
-                        *output_pixel = *sticker_pixel;
+                        output_pixel = sticker_pixel;
                     }
                 }
             }

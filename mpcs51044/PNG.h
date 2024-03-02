@@ -16,7 +16,6 @@ namespace mpcs51044 {
     unsigned int width_; // Width of the image
     unsigned int height_; // Height of the image
     vector<HSLAPixel> imageData_; // Array of pixels
-  
   public:
     // Creates an empty PNG image.
     PNG() noexcept;
@@ -51,7 +50,7 @@ namespace mpcs51044 {
     // It can be used to change the image
     // returning a pointer to an element in a container is still acceptable in modern C++
     // since it's in scenarios where nullability is required
-    HSLAPixel* getPixel(unsigned int x, unsigned int y);
+    HSLAPixel& getPixel(unsigned int x, unsigned int y);
 
     // Return the width of the image.
     unsigned int width() const noexcept;

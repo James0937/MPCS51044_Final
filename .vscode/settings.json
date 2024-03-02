@@ -5,6 +5,8 @@
         "xstring": "cpp",
         "vector": "cpp",
         "xutility": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "algorithm": "cpp",
+        "utility": "cpp"
     }
 }
