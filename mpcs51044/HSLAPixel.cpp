@@ -2,23 +2,21 @@
 
 /*It is the implementation of the HSLAPixel class for use in the PNG library.*/
 namespace mpcs51044 {
-  HSLAPixel::HSLAPixel(): h(0), s(0), l(1.0), a(1.0) {}
-
-  HSLAPixel::HSLAPixel(double hue, double saturation, double luminance) {
+  HSLAPixel::HSLAPixel(double hue, double saturation, double luminance) noexcept{
     h = hue;
     s = saturation;
     l = luminance;
     a = 1.0;
   }
 
-  HSLAPixel::HSLAPixel(double hue, double saturation, double luminance, double alpha) {
+  HSLAPixel::HSLAPixel(double hue, double saturation, double luminance, double alpha) noexcept{
     h = hue;
     s = saturation;
     l = luminance;
     a = alpha;
   }
 
-  bool HSLAPixel::operator== (HSLAPixel const & other) const {
+  bool HSLAPixel::operator== (HSLAPixel const & other) const noexcept{
     // The logic is shown in the website
     if (a != other.a) { return false; }
     if ( a == 0 ) { return true; }
@@ -32,7 +30,7 @@ namespace mpcs51044 {
     return (h == other.h);
   }
 
-  bool HSLAPixel::operator!= (HSLAPixel const & other) const {
+  bool HSLAPixel::operator!= (HSLAPixel const & other) const noexcept{
     return !(*this == other);
   }
 
@@ -41,4 +39,3 @@ namespace mpcs51044 {
     return out;
   }
 }
- 
