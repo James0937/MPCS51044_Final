@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <stdexcept>
 #include "HSLAPixel.h"
 
 // The header file of a simple PNG class using HSLAPixels and the lodepng PNG library.

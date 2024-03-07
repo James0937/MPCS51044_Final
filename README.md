@@ -1,12 +1,15 @@
 This is my final project for the course "MPCS 51044	C/C++ for Advanced Programmers".
 
+# Mention: The input picture must be in PNG format!
+## I hope you like my sticker drawing "cpp_and_mike.png" :)
+
 # Intro to the Project Features
 This is a figure-processing project. By copying images into the "./Final" dir and modifying the "main.cpp", users can insert some stickers on a base image with adjusting their image appearence if wanted (like lighten/darken, saturate, change scale, etc.). The example usage with input figures, output figures, and the code snippets I use are all provided. I/O figures are in the "./Final" dir, and the code snippets are inside the "main.cpp" file as comments.
 
 # How to Use It 
 These are the steps of using my project
 1. Copy the pictures you like into the "./Final" dir.
-2. Modify the "main.cpp" with the guidance or mimicing the comments.
+2. Modify the "main.cpp" with the function explanation in .h file or mimicing the comments.
 3. Change your pwd into "./Final", and then type:
 ```bash
     make; ./mpcs51044final
@@ -18,6 +21,8 @@ These are the steps of using my project
 ```
 Before the next execution.
 
+Also, you can don't play sticker but just use the function in the Image class to modify the input figure (like lighten/darken, saturate, change scale, etc.). This part is easy to understand, so just refer to the comments in main.cpp.
+
 # Intro to modern C++ elements in my implementation
 I applyed these knowledges into my project:
 * noexcept keyword for functions which won't raise an error
@@ -25,7 +30,10 @@ I applyed these knowledges into my project:
 * make_unique and unique_ptr for image processing
 * template function in PNG class
 * using vector as a container for image data
+* using stdexpect to handle the error
 * build move constructors and move assignment operators for some classes
+* using mutex and lock_guard for thread safety
+* using std::format for error display
 
 # Intro to Every File
 ## Inside the dir "mpcs51044"
@@ -40,4 +48,4 @@ PNG: A class using the above libraries for image processing. I build a template 
 ## In the main dir "Final"
 Image: It's a class inherited from the PNG class. I separate it from the PNG class for obeying the SOLID principle, mainly the "Single Responsibility Principle". This class includes all of the image processing function I wrote, and it uses the template function I wrote in the PNG class.
 
-StickerSheet: tbd
+StickerSheet: It's the core class for picture sticking. I also add thread in this class.

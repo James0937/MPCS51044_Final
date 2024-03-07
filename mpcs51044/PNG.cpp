@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <format>
 #include "lodepng/lodepng.h"
 #include "PNG.h"
 #include "RGB_HSL.h"
@@ -78,7 +79,8 @@ namespace mpcs51044 {
     unsigned error = lodepng::decode(byteData, width_, height_, fileName);
 
     if (error) {
-      throw std::logic_error("PNG decoding error");
+      auto errorMessage = std::format("PNG decoding error on file {}", fileName);
+      throw std::logic_error(errorMessage);
     }
 
     imageData_ = vector<HSLAPixel>(width_ * height_);
@@ -117,7 +119,8 @@ namespace mpcs51044 {
 
     unsigned error = lodepng::encode(fileName, byteData.data(), width_, height_);
     if (error) {
-      throw std::logic_error("PNG encoding error");
+      auto errorMessage = std::format("PNG encoding error on file {}", fileName);
+      throw std::logic_error(errorMessage);
     }
 
     return (error == 0);

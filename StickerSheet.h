@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <mutex>
 #include "Image.h"
 
 using std::unique_ptr;
@@ -15,15 +16,16 @@ namespace mpcs51044 {
 
 class StickerSheet {
 private:
-    unique_ptr<Image> base_;       // Base picture
-    unsigned max_;      // max number of stickers
+    unique_ptr<Image> base_;              // Base picture
+    unsigned max_;                        // max number of stickers
     vector<unique_ptr<Image>> stickers_;  // the array of stickers
     vector<unsigned> x_;       // x-coorninate of the stickers
     vector<unsigned> y_;       // y-coorninate of the stickers
+    mutable std::mutex m;      // thread safety
 
-    // Helper function to copy constructor and assignment operator
+    // Helper function for copy constructor and assignment operator
     void copy_(const StickerSheet& other);
-    // Helper function to move
+    // Helper function for move
     void move_(StickerSheet&& other) noexcept;
 
 public:
@@ -67,29 +69,9 @@ public:
     // Removes the sticker at the given zero-based layer index
     void removeSticker(unsigned index);
 
-    /**
-     * @brief Returns a pointer to the sticker at the specified index.
-     * If the index is invalid, return nullptr.
-     * 
-     * @param index The layer in which to get the sticker.
-     * @return A pointer to a specific Image in the StickerSheet
-     */
-    Image* getSticker(unsigned index) const;
-
-    /**
-     * @brief Renders the whole StickerSheet on a Image and returns it.
-     * The base picture is drawn first and then each sticker is drawn in
-     * order starting with layer zero (0), then layer one (1), and so on.
-     * If a pixel's alpha channel in a sticker is zero (0), no pixel is
-     * drawn for that sticker at that pixel. If the alpha channel is
-     * non-zero, a pixel is drawn.
-     * The returned Image always includes the full contents of the picture
-     * and all stickers. This means that the size of the result image may
-     * be larger than the base picture if some stickers go beyond the edge
-     * of the picture.
-     * 
-     * @return Image an Image object representing the drawn scene
-     */
+    // Renders the whole StickerSheet on a Image and returns it
+    // It works with the order from layer 0 to layer max-1
+    // Return an Image object representing the drawn scene
     Image render() const;
 };
 

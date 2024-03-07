@@ -70,6 +70,7 @@ StickerSheet& StickerSheet::operator=(StickerSheet&& other) noexcept{
 }
 
 void StickerSheet::changeMaxStickers(const unsigned& max) {
+    std::lock_guard<std::mutex> lock(m);
     // If max is the same, we don't need any change
     if (max == max_) return;
     max_ = max;
@@ -80,6 +81,7 @@ void StickerSheet::changeMaxStickers(const unsigned& max) {
 }
 
 int StickerSheet::addSticker(Image& sticker, unsigned x, unsigned y) {
+    std::lock_guard<std::mutex> lock(m);
     unsigned i = 0;
     for (; i < max_ && stickers_[i] != nullptr; i++);
     if (i == max_) { // The Sticker vector is already full
@@ -94,6 +96,7 @@ int StickerSheet::addSticker(Image& sticker, unsigned x, unsigned y) {
 }
 
 bool StickerSheet::translate(unsigned index, unsigned x, unsigned y) noexcept{
+    std::lock_guard<std::mutex> lock(m);
     if (index >= max_ || stickers_[index] == nullptr) {
         return false;
     }
@@ -105,16 +108,14 @@ bool StickerSheet::translate(unsigned index, unsigned x, unsigned y) noexcept{
 }
 
 void StickerSheet::removeSticker(unsigned index) {
+    std::lock_guard<std::mutex> lock(m);
     if (index < max_ && stickers_[index] != nullptr)
         stickers_[index].reset(nullptr);
         // We don't need to update x_[index] and y_[index]
 }
 
-Image* StickerSheet::getSticker(unsigned index) const {
-    return index < max_ ? stickers_[index].get() : nullptr;
-}
-
 Image StickerSheet::render() const {
+    std::lock_guard<std::mutex> lock(m);
     unsigned int w_out = base_->width();
     unsigned int h_out = base_->height();
     unsigned index;
