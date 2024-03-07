@@ -51,4 +51,5 @@ StickerSheet: It's the core class for picture sticking. I also add threads in th
 
 ## Write in the last
 I really enjoy this course and I believe I learned a lot! Thank you for the effort you have put into teaching the course. I really appreciate it.
+
 And also, I hope you like my sticker drawing "cpp_and_mike.png" :) 
