@@ -1,10 +1,23 @@
 This is my final project for the course "MPCS 51044	C/C++ for Advanced Programmers".
 
 # Intro to the Project Features
-tbd...
+This is a figure-processing project. By copying images into the ./Final dir and modifying the "main.cpp", users can insert some stickers on a base image with adjusting their image appearence if wanted (like lighten/darken, saturate, change scale, etc.). The example usage with input figures, output figures, and the code snippets I use are all provided. I/O figures are in the "./Final" dir, and the code snippets are inside the "main.cpp" file as comments.
 
-# How to Use It
+# How to Use It 
 tbd...
+1. Copy 
+2. Modify the "main.cpp" depends on 
+3. Change your pwd into "./Final", and then type
+    make
+4. Then your 
+
+# Intro to modern C++ elements in my implementation
+I applyed these knowledges into my project:
+* noexcept keyword for functions which won't raise an error
+* explicit keyword for some constructors
+* make_unique and unique_ptr for image processing
+* template function in PNG class
+* using vector as a container for image data
 
 # Intro to Every File
 ## Inside the dir "mpcs51044"

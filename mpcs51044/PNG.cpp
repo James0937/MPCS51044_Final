@@ -40,7 +40,7 @@ namespace mpcs51044 {
       const HSLAPixel& p2 = other.imageData_[i];
 
       if (p1.h != p2.h || p1.s != p2.s || p1.l != p2.l || p1.a != p2.a) 
-      return false;
+        return false;
     }
     return true;
   }
