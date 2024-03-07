@@ -1,7 +1,8 @@
 This is my final project for the course "MPCS 51044	C/C++ for Advanced Programmers".
 
-# Mention: The input picture must be in PNG format!
-## I hope you like my sticker drawing "cpp_and_mike.png" :)
+tip:
+1. please mention, the input picture must be in PNG format!
+2. I hope you like my sticker drawing "cpp_and_mike.png" :)
 
 # Intro to the Project Features
 This is a figure-processing project. By copying images into the "./Final" dir and modifying the "main.cpp", users can insert some stickers on a base image with adjusting their image appearence if wanted (like lighten/darken, saturate, change scale, etc.). The example usage with input figures, output figures, and the code snippets I use are all provided. I/O figures are in the "./Final" dir, and the code snippets are inside the "main.cpp" file as comments.
