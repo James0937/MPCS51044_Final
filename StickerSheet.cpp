@@ -3,127 +3,101 @@
 namespace mpcs51044 {
 
 void StickerSheet::copy_(const StickerSheet& other) {
-    base_ = new Image(*other.base_);
+    base_ = make_unique<Image>(*other.base_);
     max_ = other.max_;
-    stickers_ = new Image*[max_]();
-    x_= new unsigned[max_];
-    y_= new unsigned[max_];
-    for (unsigned i = 0; i < max_; ++i) {
-        if (other.stickers_[i] != nullptr) {
-            stickers_[i] = new Image(*other.stickers_[i]);
+    stickers_ = vector<unique_ptr<Image>>(max_);
+    x_ = vector<unsigned>(max_);
+    y_ = vector<unsigned>(max_);
+    // Copy each stickers step by step
+    for (unsigned i=0; i<max_; i++) {
+        if (other.stickers_[i]) {
+            stickers_[i] = make_unique<Image>(*other.stickers_[i]);
             x_[i] = other.x_[i];
             y_[i] = other.y_[i];
         }
     }
 }
 
-void StickerSheet::destroy_() {
-    if (max_ != 0) {
-        delete[] y_;
-        y_ = nullptr;
-        delete[] x_;
-        x_ = nullptr;
-        for (unsigned i = 0; i < max_; ++i) {
-            if (stickers_[i] != nullptr) {
-                delete stickers_[i];
-            }
-        }
-        delete[] stickers_;
-        stickers_ = nullptr;
-    }
-    delete base_;
-    base_ = nullptr;
+void StickerSheet::move_(StickerSheet&& other) noexcept{
+    // Transfer all of the ownership
+    base_ = std::move(other.base_);
+    max_ = other.max_;
+    stickers_ = std::move(other.stickers_);
+    x_ = std::move(other.x_);
+    y_ = std::move(other.y_);
+    // Assign the other to be totally init one
+    other.max_ = 0;
 }
 
-StickerSheet::StickerSheet()
-    : base_(new Image),
-      max_(0),
-      stickers_(nullptr),
-      x_(nullptr),
-      y_(nullptr) {}
+StickerSheet::StickerSheet() noexcept: base_(make_unique<Image>()), max_(0) {}
 
-StickerSheet::StickerSheet(const Image& picture, unsigned max) {
-    base_ = new Image(picture);
+StickerSheet::StickerSheet(const Image& picture, unsigned max) noexcept{
+    base_ = make_unique<Image>(picture);
     max_ = max;
     if (max != 0) {
-        stickers_ = new Image*[max]();
-        x_ = new unsigned[max];
-        y_ = new unsigned[max];
-    } else {
-        stickers_ = nullptr;
-        x_ = nullptr;
-        y_ = nullptr;
+        stickers_.resize(max);
+        x_.resize(max);
+        y_.resize(max);
     }
 }
 
-StickerSheet::~StickerSheet() {
-    destroy_();
-}
-
-StickerSheet::StickerSheet(const StickerSheet& other) {
+StickerSheet::StickerSheet(const StickerSheet& other){
     copy_(other);
 }
 
-const StickerSheet& StickerSheet::operator=(const StickerSheet& other) {
+StickerSheet::StickerSheet(StickerSheet&& other) noexcept{
+    move_(std::move(other));
+}
+
+StickerSheet& StickerSheet::operator=(const StickerSheet& other) {
     if (this != &other) {
-        destroy_();
-        copy_(other);
+        StickerSheet temp(other);
+        // Swap everything
+        swap(base_, temp.base_);
+        swap(max_, temp.max_);
+        swap(stickers_, temp.stickers_);
+        swap(x_, temp.x_);
+        swap(y_, temp.y_);
     }
     return *this;
 }
 
-void StickerSheet::changeMaxStickers(unsigned max) {
-    if (max != 0) {
-        Image** new_stickers = new Image*[max]();
-        unsigned* new_x = new unsigned[max];
-        unsigned* new_y = new unsigned[max];
-        for (unsigned i = 0; i < max && i < max_; ++i) {
-            if (stickers_[i] != nullptr) {
-                new_stickers[i] = new Image(*stickers_[i]);
-                new_x[i] = x_[i];
-                new_y[i] = y_[i];
-                delete stickers_[i];
-                stickers_[i] = nullptr;
-            }
-        }
-        if (max_ != 0) {
-            delete[] y_;
-            delete[] x_;
-            delete[] stickers_;
-        } 
-        y_ = new_y;
-        x_ = new_x;
-        stickers_ = new_stickers;
-    } else {
-        if (max_ != 0) {
-            delete[] y_;
-            y_ = nullptr;
-            delete[] x_;
-            x_ = nullptr;
-            delete[] stickers_;
-            stickers_ = nullptr;
-        }
+StickerSheet& StickerSheet::operator=(StickerSheet&& other) noexcept{
+    if (this != &other) {
+        move_(std::move(other));
     }
+    return *this;
+}
+
+void StickerSheet::changeMaxStickers(const unsigned& max) {
+    // If max is the same, we don't need any change
+    if (max == max_) return;
     max_ = max;
+    // Adjust the size for all of the others
+    stickers_.resize(max);
+    x_.resize(max);
+    y_.resize(max);
 }
 
 int StickerSheet::addSticker(Image& sticker, unsigned x, unsigned y) {
-    unsigned index = 0;
-    for (; index < max_ && stickers_[index] != nullptr; ++index);
-    if (index == max_) {
+    unsigned i = 0;
+    for (; i < max_ && stickers_[i] != nullptr; i++);
+    if (i == max_) { // The Sticker vector is already full
         return -1;
-    } else {
-        stickers_[index] = new Image(sticker);
-        x_[index] = x;
-        y_[index] = y;
-        return index;
+    }
+    else { // Available position exists, we can do adding
+        stickers_[i] = make_unique<Image>(sticker);
+        x_[i] = x;
+        y_[i] = y;
+        return i;
     }
 }
 
-bool StickerSheet::translate(unsigned index, unsigned x, unsigned y) {
+bool StickerSheet::translate(unsigned index, unsigned x, unsigned y) noexcept{
     if (index >= max_ || stickers_[index] == nullptr) {
         return false;
-    } else {
+    }
+    else {
         x_[index] = x;
         y_[index] = y;
         return true;
@@ -131,21 +105,20 @@ bool StickerSheet::translate(unsigned index, unsigned x, unsigned y) {
 }
 
 void StickerSheet::removeSticker(unsigned index) {
-    if (index < max_ && stickers_[index] != nullptr) {
-        delete stickers_[index];
-        stickers_[index] = nullptr;
-    }
+    if (index < max_ && stickers_[index] != nullptr)
+        stickers_[index].reset(nullptr);
+        // We don't need to update x_[index] and y_[index]
 }
 
 Image* StickerSheet::getSticker(unsigned index) const {
-    return index < max_ ? stickers_[index] : nullptr;
+    return index < max_ ? stickers_[index].get() : nullptr;
 }
 
 Image StickerSheet::render() const {
     unsigned int w_out = base_->width();
     unsigned int h_out = base_->height();
     unsigned index;
-    for (index = 0; index < max_; ++index) {
+    for (index = 0; index < max_; index++) {
         if (stickers_[index] != nullptr) {
             if (stickers_[index]->width() + x_[index] > w_out) {
                 w_out = stickers_[index]->width() + x_[index];
@@ -156,31 +129,26 @@ Image StickerSheet::render() const {
         }
     }
     Image output = Image(w_out, h_out);
-    // HSLAPixel& output_pixel;
-    // HSLAPixel& base_pixel;
-    // HSLAPixel& sticker_pixel;
     unsigned x, y;
-    // copy base to output
-    for (x = 0; x < base_->width(); ++x) {
-        for (y = 0; y < base_->height(); ++y) {
+    // Copy base to output
+    for (x = 0; x < base_->width(); x++) {
+        for (y = 0; y < base_->height(); y++) {
             HSLAPixel& base_pixel = base_->getPixel(x, y);
             HSLAPixel& output_pixel = output.getPixel(x, y);
             output_pixel = base_pixel;
         }
     }
-    // loop over every sticker
-    for (index = 0; index < max_; ++index) {
-        // only do so if non-empty
+    // Loop over every sticker
+    for (index = 0; index < max_; index++) {
+        // Only do so if non-empty
         if (stickers_[index] != nullptr) {
-            Image* sticker = stickers_[index];
-            // loop over every pixel
-            for (x = 0; x < sticker->width(); ++x) {
-                for (y = 0; y < sticker->height(); ++y) {
-                    HSLAPixel& sticker_pixel = sticker->getPixel(x, y);
-                    // alpha is not 0
+            // Loop over every pixel
+            for (x = 0; x < stickers_[index]->width(); x++) {
+                for (y = 0; y < stickers_[index]->height(); y++) {
+                    HSLAPixel& sticker_pixel = stickers_[index]->getPixel(x, y);
+                    // Alpha is not 0. The tolerance is 1e-6
                     if (sticker_pixel.a > 1e-6) {
-                        HSLAPixel& output_pixel =
-                            output.getPixel(x + x_[index], y + y_[index]);
+                        HSLAPixel& output_pixel = output.getPixel(x + x_[index], y + y_[index]);
                         output_pixel = sticker_pixel;
                     }
                 }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <utility>
 #include "HSLAPixel.h"
 
 // The header file of a simple PNG class using HSLAPixels and the lodepng PNG library.
@@ -17,14 +18,17 @@ namespace mpcs51044 {
     unsigned int height_; // Height of the image
     vector<HSLAPixel> imageData_; // Array of pixels
   public:
-    // Creates an empty PNG image.
+    // Creates an empty PNG image
     PNG() noexcept;
 
-    // Creates a PNG image of the specified dimensions.
+    // Creates a PNG image of the specified dimensions
     explicit PNG(unsigned int width, unsigned int height) noexcept;  
 
-    // Copy constructor which creates a new PNG image that is a copy of another.
+    // Copy constructor which creates a new PNG image that is a copy of another
     PNG(PNG const & other) noexcept;
+
+    // Move constructor for PNG
+    PNG(PNG&& other) noexcept;
 
     // No need to write extra deconstructor
     ~PNG() = default;
@@ -37,36 +41,39 @@ namespace mpcs51044 {
         }
     }
 
-    // Assignment operator for setting two PNGs equal to one another.
+    // Assignment operator for setting two PNGs equal to one another
     PNG & operator= (PNG const & other) noexcept;
 
-    // Overloading equality operator: checks if two images are the same.
+    // Move assignment operator for PNG
+    PNG& operator= (PNG&& other) noexcept;
+
+    // Overloading equality operator: checks if two images are the same
     bool operator== (PNG const & other) const;
 
-    // Overloading inequality operator: checks if two images are different.
+    // Overloading inequality operator: checks if two images are different
     bool operator!= (PNG const & other) const;
 
-    // Reads in a PNG image from a file.
+    // Reads in a PNG image from a file
     // using lodepng
     bool readFromFile(string const & fileName);
 
-    // Writes a PNG image to a file.
+    // Writes a PNG image to a file
     // using lodepng
     bool writeToFile(string const & fileName);
 
-    // Gets a pointer to the pixel at the given coordinates in the image.
-    // (0,0) is the upper left corner.
+    // Gets a pointer to the pixel at the given coordinates in the image
+    // (0,0) is the upper left corner
     // It can be used to change the image
     HSLAPixel& getPixel(unsigned int x, unsigned int y);
 
-    // Return the width of the image.
+    // Return the width of the image
     unsigned int width() const noexcept;
 
-    // Return the height of the image.
+    // Return the height of the image
     unsigned int height() const noexcept;
 
-    // Resizes the image to the given coordinates.
-    // Attempts to preserve existing pixel data but will crop if necessary.
+    // Resizes the image to the given coordinates
+    // Attempts to preserve existing pixel data but will crop if necessary
     void resize(unsigned int newWidth, unsigned int newHeight);
   };
 }

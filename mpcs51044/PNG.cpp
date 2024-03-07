@@ -21,11 +21,23 @@ namespace mpcs51044 {
     imageData_ = other.imageData_;
   }
 
+  PNG::PNG(PNG&& other) noexcept: width_(std::exchange(other.width_, 0)), height_(std::exchange(other.height_, 0)),
+    imageData_(std::move(other.imageData_)) {}
+
   PNG & PNG::operator=(PNG const & other) noexcept {
       if (this != &other) {
           width_ = other.width_;
           height_ = other.height_;
           imageData_ = other.imageData_;
+      }
+      return *this;
+  }
+
+  PNG& PNG::operator=(PNG&& other) noexcept {
+      if (this != &other) {
+          width_ = std::exchange(other.width_, 0);
+          height_ = std::exchange(other.height_, 0);
+          imageData_ = std::move(other.imageData_);
       }
       return *this;
   }

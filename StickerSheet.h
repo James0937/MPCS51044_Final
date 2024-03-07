@@ -1,97 +1,70 @@
 #ifndef MPCS_StickerSheet_H
 #define MPCS_StickerSheet_H
 
-#include "Image.h"
 #include <iostream>
+#include <vector>
+#include <memory>
+#include "Image.h"
+
+using std::unique_ptr;
+using std::make_unique;
+using std::vector;
+using std::swap;
 
 namespace mpcs51044 {
 
 class StickerSheet {
-    Image* base_;       // Base pcture
+private:
+    unique_ptr<Image> base_;       // Base picture
     unsigned max_;      // max number of stickers
-    Image** stickers_;  // the array of stickers
-    unsigned* x_;       // x-coorninate of the stickers
-    unsigned* y_;       // y-coorninate of the stickers
+    vector<unique_ptr<Image>> stickers_;  // the array of stickers
+    vector<unsigned> x_;       // x-coorninate of the stickers
+    vector<unsigned> y_;       // y-coorninate of the stickers
 
-    // helper function to copy
+    // Helper function to copy constructor and assignment operator
     void copy_(const StickerSheet& other);
-    // helper function to destroy
-    void destroy_();    
+    // Helper function to move
+    void move_(StickerSheet&& other) noexcept;
 
 public:
+    // Creates an empty StickerSheet object
+    StickerSheet() noexcept;
 
-    /**
-     * @brief Construct a new Sticker Sheet object
-     */
-    StickerSheet();
+    // Initializes the StickerSheet with a base 'picture' and the ability to hold 'max' stickers
+    explicit StickerSheet(const Image& picture, unsigned max = 0) noexcept;
 
-    /**
-     * @brief Initializes the StickerSheet with a base `picture` and the
-     * ability to hold `max` stickers.
-     * 
-     * @param picture The base picture to use in the StickerSheet
-     * @param max The maximum number of stickers on this StickerSheet
-     */
-    StickerSheet(const Image& picture, unsigned max);
+    // Thanks to RAII! We only need default deconstructor
+    ~StickerSheet() = default;
 
-    /**
-     * @brief Frees all space that was dynamically allocated.
-     */
-    ~StickerSheet();
-
-    /**
-     * @brief The copy constructor makes an independent copy of the source.
-     * 
-     * @param other The other StickerSheet object to copy data from
-     */
+    // Copy constructor which creates a new StickerSheet that is a copy of another
     StickerSheet(const StickerSheet& other);
 
-    /**
-     * @brief The assignment operator for the StickerSheet class.
-     * 
-     * @param other The other Scene object to copy data from
-     * @return a constant Scene reference
-     */
-    const StickerSheet& operator=(const StickerSheet& other);
+    // Move constructor for the StickerSheet
+    StickerSheet(StickerSheet&& other) noexcept;
 
-    /**
-     * @brief Modifies the maximum number of stickers that can be stored 
-     * without changing existing stickers' indices. If the new maximum 
-     * number is smaller than the current number of stickers, the stickers
-     * with indices above `max` - 1 will be lost.
-     * 
-     * @param max The new value for the maximum number of Images.
-     */
-    void changeMaxStickers(unsigned max);
+    // Copy assignment operator for setting two StickerSheets equal to one another
+    StickerSheet& operator=(const StickerSheet& other);
 
-    /**
-     * @brief Adds a sticker to the StickerSheet, so that the top-left
-     * of the sticker's Image is at (x, y) on the StickerSheet. The sticker
-     * must be added to the lowest possible layer available.
-     * 
-     * @param sticker The Image of the sticker.
-     * @param x The x location of the sticker on the StickerSheet
-     * @param y The y location of the sticker on the StickerSheet
-     * @return The zero-based layer index the sticker was added to,
-     * or -1 if the sticker cannot be added.
-     */
+    // Move assignment operator
+    StickerSheet& operator=(StickerSheet&& other) noexcept;
+
+    // Modifies the maximum number of stickers that can be stored without changing existing stickers' indices
+    // If the new maximum number is smaller than the current number of stickers,
+    // the stickers with indices above 'max-1' will be lost.
+    void changeMaxStickers(const unsigned& max);
+
+    // Adds a sticker to the StickerSheet
+    // The top-left of the sticker's Image is at (x, y) on the StickerSheet
+    // The sticker will be added to the lowest possible layer available
+    // Return the zero-based layer index the sticker was added to, or -1 if the sticker cannot be added
     int addSticker(Image& sticker, unsigned x, unsigned y);
     
-    /**
-     * @brief Changes the coordinates of the Image in the specified layer.
-     * 
-     * @param index Zero-based layer index of the sticker.
-     * @param x The new x location of the sticker on the StickerSheet
-     * @param y The new y location of the sticker on the StickerSheet
-     * @return `true` if the translate was successful; otherwise `false`.
-     */
-    bool translate(unsigned index, unsigned x, unsigned y);
+    // Changes the coordinates of the Image in the specified layer
+    // 'index' is the zero-based layer index of the sticker, and (x,y) is the new location
+    // Return true if action was successful; o/w false 
+    bool translate(unsigned index, unsigned x, unsigned y) noexcept;
     
-    /**
-     * @brief Removes the sticker at the given zero-based layer index.
-     * 
-     * @param index The layer in which to delete the png
-     */
+    // Removes the sticker at the given zero-based layer index
     void removeSticker(unsigned index);
 
     /**
